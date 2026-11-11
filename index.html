@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIF Padel Tournament 2026</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        padel: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                            950: '#052e16'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-padel-500 selection:text-white">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 glass-card border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-padel-600 to-padel-400 flex items-center justify-center shadow-lg shadow-padel-600/30">
+                    <i class="fa-solid fa-table-tennis-paddle-ball text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight tracking-tight text-white">CIF Padel 2026</h1>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs text-slate-400">University Break Tournament</span>
+                        <span id="sync-status-badge" class="text-xs uppercase bg-padel-500/20 text-padel-400 px-2 py-0.5 rounded-full font-semibold border border-padel-500/30">Connecting...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Controls -->
+            <div class="flex items-center space-x-2">
+                <button onclick="toggleAdminModal()" id="admin-toggle-btn" class="flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all bg-slate-900 border border-slate-700 text-slate-300 hover:text-white hover:border-padel-500/50">
+                    <i class="fa-solid fa-lock text-padel-400" id="admin-icon"></i>
+                    <span id="admin-btn-text">Admin Mode</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="bg-slate-900/60 border-b border-slate-800/80 sticky. top-16 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-1 py-2 overflow-x-auto">
+            <button onclick="switchTab('standings')" id="tab-standings" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-padel-600 text-white shadow-md shadow-padel-600/20 flex items-center space-x-2 whitespace-nowrap">
+                <i class="fa-solid fa-trophy"></i>
+                <span>Standings</span>
+            </button>
+            <button onclick="switchTab('schedule')" id="tab-schedule" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-400 hover:text-white hover:bg-slate-800/60 flex items-center space-x-2 whitespace-nowrap">
+                <i class="fa-solid fa-calendar-days"></i>
+                <span>Schedule & Matches</span>
+            </button>
+            <button onclick="switchTab('rules')" id="tab-rules" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-400 hover:text-white hover:bg-slate-800/60 flex items-center space-x-2 whitespace-nowrap">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>Rules & Format</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- Standings View -->
+        <div id="view-standings" class="space-y-6">
+            <!-- Group Selector -->
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex space-x-2 bg-slate-900 p-1.5 rounded-xl border border-slate-800">
+                    <button onclick="switchGroup(1)" id="group-btn-1" class="group-tab px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-padel-600 text-white">Group 1</button>
+                    <button onclick="switchGroup(2)" id="group-btn-2" class="group-tab px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-400 hover:text-white">Group 2</button>
+                    <button onclick="switchGroup(3)" id="group-btn-3" class="group-tab px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-400 hover:text-white">Group 3</button>
+                </div>
+                <div class="text-xs text-slate-400 bg-slate-900 px-3 py-2 rounded-xl border border-slate-800 flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-info text-padel-400"></i>
+                    <span>Points: Win 2-0 (3pts) | Win 2-1 (2pts) | Loss 1-2 (1pt) | Loss 0-2 (0pts)</span>
+                </div>
+            </div>
+
+            <!-- Standings Table Card -->
+            <div class="glass-card rounded-2xl overflow-hidden shadow-2xl">
+                <div class="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+                    <h3 id="current-group-title" class="font-bold text-lg text-white">Group 1 Standings</h3>
+                    <span class="text-xs text-slate-400 font-medium">Round Robin (6 Teams)</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-xs font-semibold text-slate-400 uppercase tracking-wider bg-slate-900/80">
+                                <th class="py-3.5 px-4 text-center w-16">Rank</th>
+                                <th class="py-3.5 px-4">Team Name</th>
+                                <th class="py-3.5 px-4 text-center">P</th>
+                                <th class="py-3.5 px-4 text-center text-padel-400">W (2-0)</th>
+                                <th class="py-3.5 px-4 text-center text-padel-400">W (2-1)</th>
+                                <th class="py-3.5 px-4 text-center text-amber-400">L (2-1)</th>
+                                <th class="py-3.5 px-4 text-center text-rose-400">L (2-0)</th>
+                                <th class="py-3.5 px-4 text-center font-bold text-white bg-slate-800/40">Pts</th>
+                            </tr>
+                        </thead>
+                        <tbody id="standings-table-body" class="divide-y divide-slate-800/60 text-sm">
+                            <!-- Populated Dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedule View -->
+        <div id="view-schedule" class="space-y-6 hidden">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <h3 class="font-bold text-xl text-white">Tournament Match Schedule</h3>
+                <div class="flex items-center space-x-3">
+                    <select id="schedule-group-filter" onchange="renderSchedule()" class="bg-slate-900 border border-slate-800 text-slate-300 text-sm rounded-xl px-3.5 py-2 focus:outline-none focus:border-padel-500">
+                        <option value="all">All Groups</option>
+                        <option value="1">Group 1</option>
+                        <option value="2">Group 2</option>
+                        <option value="3">Group 3</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Schedule List container -->
+            <div id="schedule-container" class="space-y-6">
+                <!-- Populated Dynamically -->
+            </div>
+        </div>
+
+        <!-- Rules View -->
+        <div id="view-rules" class="space-y-6 hidden">
+            <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-6 max-w-4xl mx-auto">
+                <div class="border-b border-slate-800 pb-4">
+                    <h3 class="text-2xl font-bold text-white">Tournament Rules & Guidelines</h3>
+                    <p class="text-slate-400 text-sm mt-1">CIF University Break Padel Tournament 2026</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800 space-y-3">
+                        <div class="w-10 h-10 rounded-lg bg-padel-500/10 text-padel-400 flex items-center justify-center font-bold text-lg">
+                            <i class="fa-solid fa-ranking-star"></i>
+                        </div>
+                        <h4 class="font-semibold text-white text-lg">Scoring System</h4>
+                        <ul class="space-y-2 text-sm text-slate-300">
+                            <li class="flex items-center justify-between bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+                                <span>Clean Win (2-0)</span>
+                                <span class="font-bold text-padel-400">3 Points</span>
+                            </li>
+                            <li class="flex items-center justify-between bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+                                <span>Close Win (2-1)</span>
+                                <span class="font-bold text-padel-400">2 Points</span>
+                            </li>
+                            <li class="flex items-center justify-between bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+                                <span>Close Loss (1-2)</span>
+                                <span class="font-bold text-amber-400">1 Point</span>
+                            </li>
+                            <li class="flex items-center justify-between bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+                                <span>Loss (0-2)</span>
+                                <span class="font-bold text-rose-400">0 Points</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800 space-y-3">
+                        <div class="w-10 h-10 rounded-lg bg-padel-500/10 text-padel-400 flex items-center justify-center font-bold text-lg">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <h4 class="font-semibold text-white text-lg">Match Format & Logistics</h4>
+                        <ul class="space-y-2 text-sm text-slate-300">
+                            <li class="flex items-start space-x-2">
+                                <i class="fa-solid fa-check text-padel-400 mt-1"></i>
+                                <span>Best of 3 games (mini-sets). First team to win 2 games wins the match.</span>
+                            </li>
+                            <li class="flex items-start space-x-2">
+                                <i class="fa-solid fa-check text-padel-400 mt-1"></i>
+                                <span>Played across 2 courts simultaneously during the 1-hour university break.</span>
+                            </li>
+                            <li class="flex items-start space-x-2">
+                                <i class="fa-solid fa-check text-padel-400 mt-1"></i>
+                                <span>Only authorized administrators can record scores and modify standings.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Admin Login Modal -->
+    <div id="admin-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-2xl p-6 sm:p-8 max-w-md w-full border border-slate-800 shadow-2xl space-y-6">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-shield-halved text-padel-400"></i>
+                    <span id="modal-title">Admin Authentication</span>
+                </h3>
+                <button onclick="toggleAdminModal()" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div id="admin-login-view" class="space-y-4">
+                <p class="text-sm text-slate-300">Enter the administrator password to unlock score editing and match recording.</p>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Password</label>
+                    <input type="password" id="admin-password-input" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:border-padel-500" placeholder="Enter admin password...">
+                </div>
+                <div id="admin-error-msg" class="text-xs text-rose-400 hidden font-medium">Incorrect password. Please try again.</div>
+                <button onclick="verifyAdminPassword()" class="w-full py-3 bg-padel-600 hover:bg-padel-500 text-white font-semibold rounded-xl text-sm transition-all shadow-lg shadow-padel-600/30">
+                    Unlock Admin Mode
+                </button>
+            </div>
+
+            <div id="admin-active-view" class="space-y-4 hidden">
+                <div class="p-4 bg-padel-500/10 border border-padel-500/30 rounded-xl flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-padel-500/20 text-padel-400 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-white text-sm">Admin Mode Active</h4>
+                        <p class="text-xs text-slate-300">You can now record scores across all matches.</p>
+                    </div>
+                </div>
+                <button onclick="logoutAdmin()" class="w-full py-3 bg-slate-900 border border-slate-700 hover:border-rose-500/50 hover:text-rose-400 text-slate-300 font-semibold rounded-xl text-sm transition-all">
+                    Lock / Log Out
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Match Score Edit Modal -->
+    <div id="match-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-2xl p-6 sm:p-8 max-w-lg w-full border border-slate-800 shadow-2xl space-y-6">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-pen-to-square text-padel-400"></i>
+                    <span>Record Match Result</span>
+                </h3>
+                <button onclick="closeMatchModal()" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <div id="modal-match-meta" class="text-xs font-medium text-padel-400 bg-slate-900 px-3 py-2 rounded-xl border border-slate-800"></div>
+
+                <div class="space-y-3">
+                    <label class="block text-xs font-semibold text-slate-400 uppercase">Select Winner & Score Outcome</label>
+                    
+                    <div class="grid grid-cols-1 gap-3">
+                        <button onclick="submitMatchResult('teamA', '2-0')" class="match-option-btn w-full p-4 rounded-xl border border-slate-800 bg-slate-900 hover:border-padel-500 text-left transition-all flex items-center justify-between">
+                            <div>
+                                <div id="modal-teamA-name" class="font-bold text-white text-sm">Team A</div>
+                                <div class="text-xs text-slate-400 mt-0.5">Wins 2 - 0 (Clean Victory • 3 Pts)</div>
+                            </div>
+                            <span class="text-xs font-bold bg-padel-500/20 text-padel-400 px-2.5 py-1 rounded-lg">2-0</span>
+                        </button>
+
+                        <button onclick="submitMatchResult('teamA', '2-1')" class="match-option-btn w-full p-4 rounded-xl border border-slate-800 bg-slate-900 hover:border-padel-500 text-left transition-all flex items-center justify-between">
+                            <div>
+                                <div id="modal-teamA-name-2" class="font-bold text-white text-sm">Team A</div>
+                                <div class="text-xs text-slate-400 mt-0.5">Wins 2 - 1 (Close Victory • 2 Pts, Loser gets 1 Pt)</div>
+                            </div>
+                            <span class="text-xs font-bold bg-padel-500/20 text-padel-400 px-2.5 py-1 rounded-lg">2-1</span>
+                        </button>
+
+                        <button onclick="submitMatchResult('teamB', '2-1')" class="match-option-btn w-full p-4 rounded-xl border border-slate-800 bg-slate-900 hover:border-padel-500 text-left transition-all flex items-center justify-between">
+                            <div>
+                                <div id="modal-teamB-name-2" class="font-bold text-white text-sm">Team B</div>
+                                <div class="text-xs text-slate-400 mt-0.5">Wins 2 - 1 (Close Victory • 2 Pts, Loser gets 1 Pt)</div>
+                            </div>
+                            <span class="text-xs font-bold bg-padel-500/20 text-padel-400 px-2.5 py-1 rounded-lg">2-1</span>
+                        </button>
+
+                        <button onclick="submitMatchResult('teamB', '2-0')" class="match-option-btn w-full p-4 rounded-xl border border-slate-800 bg-slate-900 hover:border-padel-500 text-left transition-all flex items-center justify-between">
+                            <div>
+                                <div id="modal-teamB-name" class="font-bold text-white text-sm">Team B</div>
+                                <div class="text-xs text-slate-400 mt-0.5">Wins 2 - 0 (Clean Victory • 3 Pts)</div>
+                            </div>
+                            <span class="text-xs font-bold bg-padel-500/20 text-padel-400 px-2.5 py-1 rounded-lg">2-0</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-between items-center">
+                    <button onclick="clearMatchResult()" class="text-xs text-rose-400 hover:underline">Clear Recorded Result</button>
+                    <button onclick="closeMatchModal()" class="px-4 py-2 bg-slate-900 border border-slate-700 text-slate-300 rounded-xl text-xs font-medium">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK Imports & Cloud Sync Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAznJ9hDemZgLdJwFanAVqjI2vsJyAk6Yk",
+            authDomain: "cif-padel.firebaseapp.com",
+            projectId: "cif-padel",
+            storageBucket: "cif-padel.firebasestorage.app",
+            messagingSenderId: "249560330056",
+            appId: "1:249560330056:web:fbc08b737983e92d630d7d",
+            measurementId: "G-59WSPBSDH3"
+        };
+
+        let app, db, auth;
+        let isCloudConnected = false;
+
+        const initialGroups = {
+            1: [
+                { name: "Steven Raymond & Patrick Amgad", played: 0, w20: 0, w21: 0, l21: 0, l20: 0, points: 0 },
+                { name: "Mohannad & Ali Oudid", played: 0, w20: 0, w21: 0, l21: 0, l20: 0, points: 0 },
+                { name: "Nour Bassam & Ahmed Waleed", played: 0, w20: 0, w21: 0, l21: 0, l20: 0, points: 0 },
+                { name: "John Amgad & Seif Remon", played: 0, w20: 0, w21: 0, l21: 0, l20: 0, points: 0 },
+                { name: "Jana Walid & Omr Eissa", played: 0, w20: 0, w21: 0, l21: 0, l20: 0, points: 0 },
+                { name: "Omar Saad & Ali Emad", played: 0, w20: 0, w21: 0, l21: 0, l20: 0, points: 0 }
+            ],
+            2: [
+                { name: "Youssef Sameh & Hazem Adel", played: 0, w20: 0, w21: 0, l21: 0, l20: 0, points: 0 },
+                { name: "Ahmed Atef & Yassin Ahmed", played: 0, w20: 0, w21: 0, l21: 0, l20: 0, points: 0 },
+                { name: "Noureldin Tamer & Eyad Omar", played: 0, w20: 0, w21: 0, l21: 0, l20: 0, points: 0 },
+                { name: "Hamza Mohammed & Anis Montaser", played: 0, w20: 0, w21: 0, l21: 0, l20: 0, points: 0 },
+                { name: "Sohaib Tamer & Adam Mostafa", played: 0, w20: 0, w21: 0, l21: 0, l20: 0, points: 0 },
+                { name: "Youssef Samy & Seif Mohammed", played: 0, w20: 0, w21: 0, l21: 0, l20: 0, points: 0 }
+            ],
+            3: [
+                { name: "Sogood Assaf & Abdelrahman Khaled", played: 0, w20: 0, w21: 0, l21: 0, l20: 0, points: 0 },
+                { name: "Nour Ahmed & Layali Hisham", played: 0, w20: 0, w21: 0, l21: 0, l20: 0, points: 0 },
+                { name: "Emmanulla & Georgina Raafat", played: 0, w20: 0, w21: 0, l21: 0, l20: 0, points: 0 },
+                { name: "Diana Markos & Nour Mohamed", played: 0, w20: 0, w21: 0, l21: 0, l20: 0, points: 0 },
+                { name: "Mohammed Hassan & Adham Khaled", played: 0, w20: 0, w21: 0, l21: 0, l20: 0, points: 0 },
+                { name: "Demiana & Christine", played: 0, w20: 0, w21: 0, l21: 0, l20: 0, points: 0 }
+            ]
+        };
+
+        const scheduleData = [
+            {
+                date: "Sunday, Nov 15, 2026",
+                matches: [
+                    { id: "m1", court: "Court 1", group: 1, teamA: "Steven Raymond & Patrick Amgad", teamB: "Mohannad & Ali Oudid" },
+                    { id: "m2", court: "Court 2", group: 2, teamA: "Youssef Sameh & Hazem Adel", teamB: "Ahmed Atef & Yassin Ahmed" },
+                    { id: "m3", court: "Court 1", group: 1, teamA: "Nour Bassam & Ahmed Waleed", teamB: "John Amgad & Seif Remon" },
+                    { id: "m4", court: "Court 2", group: 2, teamA: "Noureldin Tamer & Eyad Omar", teamB: "Hamza Mohammed & Anis Montaser" }
+                ]
+            },
+            {
+                date: "Monday, Nov 16, 2026",
+                matches: [
+                    { id: "m5", court: "Court 1", group: 1, teamA: "Jana Walid & Omr Eissa", teamB: "Omar Saad & Ali Emad" },
+                    { id: "m6", court: "Court 2", group: 2, teamA: "Sohaib Tamer & Adam Mostafa", teamB: "Youssef Samy & Seif Mohammed" },
+                    { id: "m7", court: "Court 1", group: 3, teamA: "Sogood Assaf & Abdelrahman Khaled", teamB: "Nour Ahmed & Layali Hisham" },
+                    { id: "m8", court: "Court 2", group: 3, teamA: "Emmanulla & Georgina Raafat", teamB: "Diana Markos & Nour Mohamed" }
+                ]
+            },
+            {
+                date: "Tuesday, Nov 17, 2026",
+                matches: [
+                    { id: "m9", court: "Court 1", group: 3, teamA: "Mohammed Hassan & Adham Khaled", teamB: "Demiana & Christine" },
+                    { id: "m10", court: "Court 2", group: 1, teamA: "Steven Raymond & Patrick Amgad", teamB: "Nour Bassam & Ahmed Waleed" },
+                    { id: "m11", court: "Court 1", group: 1, teamA: "Mohannad & Ali Oudid", teamB: "Jana Walid & Omr Eissa" },
+                    { id: "m12", court: "Court 2", group: 1, teamA: "John Amgad & Seif Remon", teamB: "Omar Saad & Ali Emad" }
+                ]
+            },
+            {
+                date: "Wednesday, Nov 18, 2026",
+                matches: [
+                    { id: "m13", court: "Court 1", group: 2, teamA: "Youssef Sameh & Hazem Adel", teamB: "Noureldin Tamer & Eyad Omar" },
+                    { id: "m14", court: "Court 2", group: 2, teamA: "Ahmed Atef & Yassin Ahmed", teamB: "Sohaib Tamer & Adam Mostafa" },
+                    { id: "m15", court: "Court 1", group: 2, teamA: "Hamza Mohammed & Anis Montaser", teamB: "Youssef Samy & Seif Mohammed" },
+                    { id: "m16", court: "Court 2", group: 3, teamA: "Sogood Assaf & Abdelrahman Khaled", teamB: "Emmanulla & Georgina Raafat" }
+                ]
+            },
+            {
+                date: "Sunday, Nov 22, 2026",
+                matches: [
+                    { id: "m17", court: "Court 1", group: 3, teamA: "Nour Ahmed & Layali Hisham", teamB: "Mohammed Hassan & Adham Khaled" },
+                    { id: "m18", court: "Court 2", group: 3, teamA: "Diana Markos & Nour Mohamed", teamB: "Demiana & Christine" },
+                    { id: "m19", court: "Court 1", group: 1, teamA: "Steven Raymond & Patrick Amgad", teamB: "John Amgad & Seif Remon" },
+                    { id: "m20", court: "Court 2", group: 2, teamA: "Youssef Sameh & Hazem Adel", teamB: "Hamza Mohammed & Anis Montaser" }
+                ]
+            },
+            {
+                date: "Monday, Nov 23, 2026",
+                matches: [
+                    { id: "m21", court: "Court 1", group: 1, teamA: "Mohannad & Ali Oudid", teamB: "Omar Saad & Ali Emad" },
+                    { id: "m22", court: "Court 2", group: 2, teamA: "Ahmed Atef & Yassin Ahmed", teamB: "Youssef Samy & Seif Mohammed" },
+                    { id: "m23", court: "Court 1", group: 1, teamA: "Nour Bassam & Ahmed Waleed", teamB: "Jana Walid & Omr Eissa" },
+                    { id: "m24", court: "Court 2", group: 2, teamA: "Noureldin Tamer & Eyad Omar", teamB: "Sohaib Tamer & Adam Mostafa" }
+                ]
+            },
+            {
+                date: "Tuesday, Nov 24, 2026",
+                matches: [
+                    { id: "m25", court: "Court 1", group: 3, teamA: "Sogood Assaf & Abdelrahman Khaled", teamB: "Mohammed Hassan & Adham Khaled" },
+                    { id: "m26", court: "Court 2", group: 3, teamA: "Nour Ahmed & Layali Hisham", teamB: "Demiana & Christine" },
+                    { id: "m27", court: "Court 1", group: 3, teamA: "Emmanulla & Georgina Raafat", teamB: "Diana Markos & Nour Mohamed" },
+                    { id: "m28", court: "Court 2", group: 1, teamA: "Steven Raymond & Patrick Amgad", teamB: "Jana Walid & Omr Eissa" }
+                ]
+            },
+            {
+                date: "Wednesday, Nov 25, 2026",
+                matches: [
+                    { id: "m29", court: "Court 1", group: 1, teamA: "Mohannad & Ali Oudid", teamB: "John Amgad & Seif Remon" },
+                    { id: "m30", court: "Court 2", group: 2, teamA: "Youssef Sameh & Hazem Adel", teamB: "Sohaib Tamer & Adam Mostafa" },
+                    { id: "m31", court: "Court 1", group: 1, teamA: "Nour Bassam & Ahmed Waleed", teamB: "Omar Saad & Ali Emad" },
+                    { id: "m32", court: "Court 2", group: 2, teamA: "Ahmed Atef & Yassin Ahmed", teamB: "Hamza Mohammed & Anis Montaser" }
+                ]
+            },
+            {
+                date: "Sunday, Nov 29, 2026",
+                matches: [
+                    { id: "m33", court: "Court 1", group: 2, teamA: "Noureldin Tamer & Eyad Omar", teamB: "Youssef Samy & Seif Mohammed" },
+                    { id: "m34", court: "Court 2", group: 3, teamA: "Sogood Assaf & Abdelrahman Khaled", teamB: "Diana Markos & Nour Mohamed" },
+                    { id: "m35", court: "Court 1", group: 3, teamA: "Nour Ahmed & Layali Hisham", teamB: "Emmanulla & Georgina Raafat" },
+                    { id: "m36", court: "Court 2", group: 1, teamA: "Steven Raymond & Patrick Amgad", teamB: "Omar Saad & Ali Emad" }
+                ]
+            },
+            {
+                date: "Monday, Nov 30, 2026",
+                matches: [
+                    { id: "m37", court: "Court 1", group: 1, teamA: "Mohannad & Ali Oudid", teamB: "Nour Bassam & Ahmed Waleed" },
+                    { id: "m38", court: "Court 2", group: 3, teamA: "Mohammed Hassan & Adham Khaled", teamB: "Demiana & Christine" },
+                    { id: "m39", court: "Court 1", group: 1, teamA: "John Amgad & Seif Remon", teamB: "Jana Walid & Omr Eissa" },
+                    { id: "m40", court: "Court 2", group: 2, teamA: "Youssef Sameh & Hazem Adel", teamB: "Youssef Samy & Seif Mohammed" }
+                ]
+            },
+            {
+                date: "Tuesday, Dec 1, 2026",
+                matches: [
+                    { id: "m41", court: "Court 1", group: 2, teamA: "Ahmed Atef & Yassin Ahmed", teamB: "Noureldin Tamer & Eyad Omar" },
+                    { id: "m42", court: "Court 2", group: 3, teamA: "Sogood Assaf & Abdelrahman Khaled", teamB: "Demiana & Christine" },
+                    { id: "m43", court: "Court 1", group: 2, teamA: "Hamza Mohammed & Anis Montaser", teamB: "Sohaib Tamer & Adam Mostafa" },
+                    { id: "m44", court: "Court 2", group: 3, teamA: "Nour Ahmed & Layali Hisham", teamB: "Diana Markos & Nour Mohamed" }
+                ]
+            },
+            {
+                date: "Wednesday, Dec 2, 2026",
+                matches: [
+                    { id: "m45", court: "Court 1", group: 3, teamA: "Emmanulla & Georgina Raafat", teamB: "Mohammed Hassan & Adham Khaled" },
+                    { id: "m46", court: "Court 2", group: 1, teamA: "Buffer / Extra Slot", teamB: "Buffer / Extra Slot" }
+                ]
+            }
+        ];
+
+        let tournamentData = JSON.parse(JSON.stringify(initialGroups));
+        let matchResults = {};
+        let activeGroup = 1;
+        let isAdminLoggedIn = false;
+        let currentEditingMatchId = null;
+
+        async function initFirebaseAndSync() {
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                await signInAnonymously(auth);
+
+                isCloudConnected = true;
+                updateSyncBadge(true);
+
+                const docRef = doc(db, 'tournaments', 'cif_padel_main_v1');
+                
+                onSnapshot(docRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const cloudData = docSnap.data();
+                        if (cloudData.groups) tournamentData = cloudData.groups;
+                        if (cloudData.matches) matchResults = cloudData.matches;
+                        renderStandings();
+                        renderSchedule();
+                    } else {
+                        setDoc(docRef, { groups: initialGroups, matches: {} }).catch(err => console.error("Init setDoc error:", err));
+                    }
+                }, (error) => {
+                    console.error("Firestore snapshot error:", error);
+                    updateSyncBadge(false);
+                    loadLocalStorageFallback();
+                });
+
+            } catch (err) {
+                console.warn("Firebase cloud connection error, falling back to local storage:", err);
+                isCloudConnected = false;
+                updateSyncBadge(false);
+                loadLocalStorageFallback();
+            }
+        }
+
+        function updateSyncBadge(online) {
+            const badge = document.getElementById('sync-status-badge');
+            if(!badge) return;
+            if(online) {
+                badge.className = "text-xs uppercase bg-padel-500/20 text-padel-400 px-2 py-0.5 rounded-full font-semibold border border-padel-500/30";
+                badge.innerText = "Live Cloud Synced";
+            } else {
+                badge.className = "text-xs uppercase bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full font-semibold border border-amber-500/30";
+                badge.innerText = "Local Mode";
+            }
+        }
+
+        function loadLocalStorageFallback() {
+            const savedGroups = localStorage.getItem('padel_tournament_groups');
+            const savedMatches = localStorage.getItem('padel_tournament_matches');
+            if (savedGroups) { try { tournamentData = JSON.parse(savedGroups); } catch(e) {} }
+            if (savedMatches) { try { matchResults = JSON.parse(savedMatches); } catch(e) {} }
+            renderStandings();
+            renderSchedule();
+        }
+
+        async function saveCloudData() {
+            const payload = { groups: tournamentData, matches: matchResults };
+            if (isCloudConnected && auth && auth.currentUser) {
+                try {
+                    const docRef = doc(db, 'tournaments', 'cif_padel_main_v1');
+                    await setDoc(docRef, payload);
+                    return;
+                } catch(e) {
+                    console.warn("Cloud save write failed:", e);
+                }
+            }
+            localStorage.setItem('padel_tournament_groups', JSON.stringify(tournamentData));
+            localStorage.setItem('padel_tournament_matches', JSON.stringify(matchResults));
+            renderStandings();
+            renderSchedule();
+        }
+
+        window.switchTab = function(tabName) {
+            document.getElementById('view-standings').classList.add('hidden');
+            document.getElementById('view-schedule').classList.add('hidden');
+            document.getElementById('view-rules').classList.add('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-400 hover:text-white hover:bg-slate-800/60 flex items-center space-x-2 whitespace-nowrap";
+            });
+
+            document.getElementById(`view-${tabName}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tabName}`);
+            activeBtn.className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-padel-600 text-white shadow-md shadow-padel-600/20 flex items-center space-x-2 whitespace-nowrap";
+        }
+
+        window.switchGroup = function(groupId) {
+            activeGroup = groupId;
+            document.querySelectorAll('.group-tab').forEach(btn => {
+                btn.className = "group-tab px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-400 hover:text-white";
+            });
+            document.getElementById(`group-btn-${groupId}`).className = "group-tab px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-padel-600 text-white";
+            document.getElementById('current-group-title').innerText = `Group ${groupId} Standings`;
+            renderStandings();
+        }
+
+        function calculateGroupStats(groupId) {
+            let teams = tournamentData[groupId];
+            teams.forEach(t => {
+                t.played = 0;
+                t.w20 = 0;
+                t.w21 = 0;
+                t.l21 = 0;
+                t.l20 = 0;
+                t.points = 0;
+            });
+
+            Object.values(matchResults).forEach(res => {
+                if (res.group == groupId) {
+                    let teamAObj = teams.find(t => t.name === res.teamA);
+                    let teamBObj = teams.find(t => t.name === res.teamB);
+
+                    if (teamAObj && teamBObj) {
+                        if (res.winner === 'teamA') {
+                            teamAObj.played++;
+                            teamBObj.played++;
+                            if (res.score === '2-0') {
+                                teamAObj.w20++;
+                                teamAObj.points += 3;
+                                teamBObj.l20++;
+                            } else {
+                                teamAObj.w21++;
+                                teamAObj.points += 2;
+                                teamBObj.l21++;
+                                teamBObj.points += 1;
+                            }
+                        } else if (res.winner === 'teamB') {
+                            teamAObj.played++;
+                            teamBObj.played++;
+                            if (res.score === '2-0') {
+                                teamBObj.w20++;
+                                teamBObj.points += 3;
+                                teamAObj.l20++;
+                            } else {
+                                teamBObj.w21++;
+                                teamBObj.points += 2;
+                                teamAObj.l21++;
+                                teamAObj.points += 1;
+                            }
+                        }
+                    }
+                }
+            });
+
+            teams.sort((a, b) => {
+                if (b.points !== a.points) return b.points - a.points;
+                let winsA = a.w20 + a.w21;
+                let winsB = b.w20 + b.w21;
+                if (winsB !== winsA) return winsB - winsA;
+                return a.name.localeCompare(b.name);
+            });
+        }
+
+        function renderStandings() {
+            calculateGroupStats(activeGroup);
+            let teams = tournamentData[activeGroup];
+            let tbody = document.getElementById('standings-table-body');
+            tbody.innerHTML = '';
+
+            teams.forEach((team, index) => {
+                let rankClass = "text-slate-400";
+                if (index === 0) rankClass = "text-amber-400 font-bold bg-amber-500/10 rounded-lg";
+                else if (index === 1) rankClass = "text-slate-300 font-bold bg-slate-200/10 rounded-lg";
+                else if (index === 2) rankClass = "text-amber-600 font-bold";
+
+                let tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-900/40 transition-colors";
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 text-center">
+                        <span class="inline-block w-7 h-7 leading-7 text-center ${rankClass}">${index + 1}</span>
+                    </td>
+                    <td class="py-3.5 px-4 font-semibold text-white">${team.name}</td>
+                    <td class="py-3.5 px-4 text-center text-slate-300">${team.played}</td>
+                    <td class="py-3.5 px-4 text-center text-padel-400 font-medium">${team.w20}</td>
+                    <td class="py-3.5 px-4 text-center text-padel-400 font-medium">${team.w21}</td>
+                    <td class="py-3.5 px-4 text-center text-amber-400 font-medium">${team.l21}</td>
+                    <td class="py-3.5 px-4 text-center text-rose-400 font-medium">${team.l20}</td>
+                    <td class="py-3.5 px-4 text-center font-extrabold text-white bg-slate-800/40 text-base">${team.points}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderSchedule() {
+            const filterVal = document.getElementById('schedule-group-filter').value;
+            const container = document.getElementById('schedule-container');
+            container.innerHTML = '';
+
+            scheduleData.forEach(day => {
+                let filteredMatches = day.matches.filter(m => {
+                    if (filterVal === 'all') return true;
+                    return m.group == filterVal;
+                });
+
+                if (filteredMatches.length === 0) return;
+
+                let dayCard = document.createElement('div');
+                dayCard.className = "glass-card rounded-2xl p-5 space-y-4 shadow-xl";
+                
+                let matchesHtml = filteredMatches.map(m => {
+                    let res = matchResults[m.id];
+                    let statusBadge = `<span class="text-xs px-2.5 py-1 rounded-lg bg-slate-800 text-slate-400 font-medium border border-slate-700">Scheduled</span>`;
+                    let scoreDisplay = `<span class="text-xs text-slate-500 font-bold uppercase tracking-wider">vs</span>`;
+                    let cardBorder = "border-slate-800/80 hover:border-slate-700";
+
+                    if (res) {
+                        cardBorder = "border-padel-500/40 bg-padel-500/5";
+                        statusBadge = `<span class="text-xs px-2.5 py-1 rounded-lg bg-padel-500/20 text-padel-400 font-bold border border-padel-500/30">Completed (${res.score})</span>`;
+                        
+                        let teamAStyle = res.winner === 'teamA' ? "text-padel-400 font-bold" : "text-slate-300";
+                        let teamBStyle = res.winner === 'teamB' ? "text-padel-400 font-bold" : "text-slate-300";
+                        
+                        scoreDisplay = `
+                            <div class="flex items-center space-x-2">
+                                <span class="${teamAStyle}">${res.teamA}</span>
+                                <span class="px-2 py-0.5 bg-slate-900 rounded font-bold text-xs text-white border border-slate-800">${res.score}</span>
+                                <span class="${teamBStyle}">${res.teamB}</span>
+                            </div>
+                        `;
+                    }
+
+                    let actionBtn = '';
+                    if (isAdminLoggedIn) {
+                        actionBtn = `
+                            <button onclick="openMatchModal('${m.id}')" class="px-3 py-1.5 bg-padel-600 hover:bg-padel-500 text-white rounded-xl text-xs font-semibold transition-all shadow-sm">
+                                ${res ? 'Edit Score' : 'Record Score'}
+                            </button>
+                        `;
+                    }
+
+                    return `
+                        <div class="p-4 rounded-xl border ${cardBorder} bg-slate-900/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all">
+                            <div class="space-y-1">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-300">${m.court}</span>
+                                    <span class="text-xs text-slate-400">Group ${m.group}</span>
+                                    ${statusBadge}
+                                </div>
+                                <div class="text-sm font-semibold text-white pt-1">
+                                    ${m.teamA} <span class="text-slate-500 font-normal px-1.5">vs</span> ${m.teamB}
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3 w-full sm:w-auto justify-end">
+                                ${actionBtn}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                dayCard.innerHTML = `
+                    <div class="border-b border-slate-800 pb-3 flex items-center justify-between">
+                        <h4 class="font-bold text-base text-white flex items-center space-x-2">
+                            <i class="fa-solid fa-calendar-day text-padel-400"></i>
+                            <span>${day.date}</span>
+                        </h4>
+                        <span class="text-xs text-slate-400">${filteredMatches.length} Matches</span>
+                    </div>
+                    <div class="space-y-3">
+                        ${matchesHtml}
+                    </div>
+                `;
+
+                container.appendChild(dayCard);
+            });
+        }
+
+        window.toggleAdminModal = function() {
+            const modal = document.getElementById('admin-modal');
+            modal.classList.toggle('hidden');
+            if(!isAdminLoggedIn) {
+                document.getElementById('admin-login-view').classList.remove('hidden');
+                document.getElementById('admin-active-view').classList.add('hidden');
+                document.getElementById('admin-password-input').value = '';
+                document.getElementById('admin-error-msg').classList.add('hidden');
+            } else {
+                document.getElementById('admin-login-view').classList.add('hidden');
+                document.getElementById('admin-active-view').classList.remove('hidden');
+            }
+        }
+
+        window.verifyAdminPassword = function() {
+            const pwd = document.getElementById('admin-password-input').value;
+            if (pwd === 'padel123') {
+                isAdminLoggedIn = true;
+                document.getElementById('admin-modal').classList.add('hidden');
+                updateAdminUIState();
+                renderSchedule();
+            } else {
+                document.getElementById('admin-error-msg').classList.remove('hidden');
+            }
+        }
+
+        window.logoutAdmin = function() {
+            isAdminLoggedIn = false;
+            document.getElementById('admin-modal').classList.add('hidden');
+            updateAdminUIState();
+            renderSchedule();
+        }
+
+        function updateAdminUIState() {
+            const btn = document.getElementById('admin-toggle-btn');
+            const icon = document.getElementById('admin-icon');
+            const text = document.getElementById('admin-btn-text');
+            if(isAdminLoggedIn) {
+                btn.className = "flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all bg-padel-600/20 border border-padel-500 text-padel-300";
+                icon.className = "fa-solid fa-unlock text-padel-400";
+                text.innerText = "Admin Active";
+            } else {
+                btn.className = "flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all bg-slate-900 border border-slate-700 text-slate-300 hover:text-white hover:border-padel-500/50";
+                icon.className = "fa-solid fa-lock text-padel-400";
+                text.innerText = "Admin Mode";
+            }
+        }
+
+        window.openMatchModal = function(matchId) {
+            currentEditingMatchId = matchId;
+            let matchObj = null;
+            scheduleData.forEach(d => {
+                let found = d.matches.find(m => m.id === matchId);
+                if(found) matchObj = found;
+            });
+
+            if(!matchObj) return;
+
+            document.getElementById('modal-match-meta').innerText = `${matchObj.court} • Group ${matchObj.group}`;
+            document.getElementById('modal-teamA-name').innerText = matchObj.teamA;
+            document.getElementById('modal-teamA-name-2').innerText = matchObj.teamA;
+            document.getElementById('modal-teamB-name').innerText = matchObj.teamB;
+            document.getElementById('modal-teamB-name-2').innerText = matchObj.teamB;
+
+            document.getElementById('match-modal').classList.remove('hidden');
+        }
+
+        window.closeMatchModal = function() {
+            document.getElementById('match-modal').classList.add('hidden');
+            currentEditingMatchId = null;
+        }
+
+        window.submitMatchResult = async function(winnerTeam, scoreOutcome) {
+            if(!currentEditingMatchId) return;
+            let matchObj = null;
+            scheduleData.forEach(d => {
+                let found = d.matches.find(m => m.id === currentEditingMatchId);
+                if(found) matchObj = found;
+            });
+
+            if(!matchObj) return;
+
+            matchResults[currentEditingMatchId] = {
+                group: matchObj.group,
+                teamA: matchObj.teamA,
+                teamB: matchObj.teamB,
+                winner: winnerTeam,
+                score: scoreOutcome
+            };
+
+            await saveCloudData();
+            closeMatchModal();
+        }
+
+        window.clearMatchResult = async function() {
+            if(!currentEditingMatchId) return;
+            if(matchResults[currentEditingMatchId]) {
+                delete matchResults[currentEditingMatchId];
+                await saveCloudData();
+            }
+            closeMatchModal();
+        }
+
+        window.onload = function() {
+            initFirebaseAndSync();
+        }
+    </script>
+</body>
+</html>
